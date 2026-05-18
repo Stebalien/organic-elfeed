@@ -76,7 +76,7 @@ description as the optional title."
             (push `(,(org-element-property :raw-link link)
                     ,@(when-let* ((title (org-element-contents link)))
                         (list :title (substring-no-properties (car title))))
-                    :source 'elfeed-org
+                    :source elfeed-org
                     ,@(delq 'elfeed (mapcar #'intern tags)))
                   feeds)))))
     (nreverse feeds)))
