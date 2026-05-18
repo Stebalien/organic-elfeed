@@ -1,4 +1,15 @@
 #+TITLE:Org-Mode Integration for Elfeed
 #+AUTHOR: Steven Allen
 
-This is a simpler alternative to [[https://github.com/remyhonig/elfeed-org][elfeed-org]] with fewer features and no advice.
+Configure [[https://github.com/emacs-elfeed/elfeed][Elfeed]] feeds with org-mode files. This package was inspired by [[https://github.com/remyhonig/elfeed-org][@remyhonig's]] elfeed-org, but the feature set is somewhat different and it avoids advising elfeed functions.
+
+Compared to [[https://github.com/remyhonig/elfeed-org][@remyhonig's]] elfeed-org, this package:
+
+1. Auto-updates ~elfeed-feeds~ whenever any file listed in ~elfeed-org-files~ changes (without having to close and re-open elfeed).
+2. Extends ~elfeed-feeds~ instead of replacing it in case you want to configure feeds from multiple sources (e.g., OPML files).
+
+However, it doesn't implement the following features:
+
+1. Title-based tagging rules (=entry-title: REGEX=).
+2. Auto-ignoring broken feeds. I probably won't implement this.
+3. OPML Import/Export.
