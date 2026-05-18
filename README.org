@@ -1,0 +1,4 @@
+#+TITLE:Org-Mode Integration for Elfeed
+#+AUTHOR: Steven Allen
+
+This is a simpler alternative to [[https://github.com/remyhonig/elfeed-org][elfeed-org]] with fewer features and no advice.
