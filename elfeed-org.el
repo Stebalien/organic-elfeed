@@ -43,7 +43,6 @@
 ;; listed in `elfeed-org-files'.
 
 ;;; Code:
-(require 'seq)
 (require 'elfeed-db)
 (require 'org-element)
 (eval-when-compile (require 'org-macs))
@@ -56,7 +55,7 @@
   "Set the SYMBOL to VALUE and update `elfeed-feeds'."
   (set-default-toplevel-value symbol value)
   (when (featurep 'elfeed-org)
-    (elfeed-org-update)))
+    (elfeed-org--update)))
 
 (defcustom elfeed-org-files nil
   "List of `org-mode' files to search for feeds.
@@ -81,6 +80,14 @@ the file commentary for a complete usage example."
   :set #'elfeed-org--set-and-update
   :group 'elfeed-org)
 
+;;;###autoload
+(define-minor-mode elfeed-org-mode
+  "Populate `elfeed-feeds' via `org-mode' files specified in `elfeed-org-files'."
+  :global t
+  (if elfeed-org-mode
+      (add-hook 'org-mode-hook #'elfeed-org--org-setup)
+    (remove-hook 'org-mode-hook #'elfeed-org--org-setup))
+  (elfeed-org--update))
 
 (defun elfeed-org--headline-link (headline)
   "Extract the first link from HEADLINE's title.
@@ -124,36 +131,29 @@ FILES is a list of file paths to `org-mode' files. Return a
 combined list of all feed specifications found across all files."
   (mapcan #'elfeed-org--parse-file files))
 
-(defun elfeed-org-update ()
+(defun elfeed-org--update ()
   "Update `elfeed-feeds' by parsing all files in `elfeed-org-files'.
 
 This function re-reads all `org-mode' files listed in `elfeed-org-files'
 and sets `elfeed-feeds' to the resulting list of feed specifications."
-  (setq elfeed-feeds
-        (append
-         (seq-remove
-          (lambda (feed) (eq (plist-get (cdr feed) :source) 'elfeed-org))
-          elfeed-feeds)
-         (elfeed-org--feeds elfeed-org-files))))
+  (cl-callf2 cl-remove-if
+      (lambda (feed) (eq (plist-get (cdr feed) :source) 'elfeed-org))
+      elfeed-feeds)
+  (when elfeed-org-mode
+    (cl-callf append elfeed-feeds (elfeed-org--feeds elfeed-org-files))))
 
 (defun elfeed-org--maybe-update-after-save ()
   "Update feeds if the current buffer is one of `elfeed-org-files'."
   (let ((default-directory org-directory))
-    (when (and
-           buffer-file-name
-           (seq-contains-p elfeed-org-files buffer-file-name #'file-equal-p))
-      (elfeed-org-update))))
+    (when (and buffer-file-name (cl-member buffer-file-name
+                                           elfeed-org-files
+                                           :test #'file-equal-p))
+      (elfeed-org--update))))
 
 (defun elfeed-org--org-setup ()
-  "Set up auto-update for elfeed when editing an `org-mode' file.
+  "Set up auto-update for elfeed when editing an `org-mode' file."
+  (add-hook 'after-save-hook 'elfeed-org--update nil t))
 
-Adds `elfeed-org-update' to the local `after-save-hook' so that
-saving an `org-mode' file listed in `elfeed-org-files' automatically
-refreshes the feed list."
-  (add-hook 'after-save-hook 'elfeed-org-update nil t))
-
-(add-hook 'org-mode-hook #'elfeed-org--org-setup)
-(elfeed-org-update)
 
 (provide 'elfeed-org)
 ;;; elfeed-org.el ends here

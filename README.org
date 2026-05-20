@@ -3,6 +3,25 @@
 
 Configure [[https://github.com/emacs-elfeed/elfeed][Elfeed]] feeds with org-mode files. This package was inspired by [[https://github.com/remyhonig/elfeed-org][@remyhonig's]] elfeed-org, but it focuses on having a cleaner integration with elfeed (no advice, public APIs only) and doing one thing only: configuring ~elfeed-feeds~ via org-mode.
 
+* Usage
+:PROPERTIES:
+:ID:       af260ac0-414d-4da6-91e2-ac515413f329
+:END:
+
+#+begin_src elisp
+(use-package elfeed-org
+  :vc (:url "https://github.com/Stebalien/elfeed-org")
+  :after elfeed
+  :custom
+  (elfeed-org-files "my-feeds.org")
+  (elfeed-org-mode t))
+#+end_src
+
+* Features
+:PROPERTIES:
+:ID:       c6f88dd6-40a7-49bd-9918-2cb35953e64c
+:END:
+
 Compared to [[https://github.com/remyhonig/elfeed-org][@remyhonig's]] elfeed-org, this package:
 
 1. Auto-updates ~elfeed-feeds~ whenever any file listed in ~elfeed-org-files~ changes (without having to close and re-open elfeed).
