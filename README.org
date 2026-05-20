@@ -1,7 +1,7 @@
 #+TITLE:Org-Mode Integration for Elfeed
 #+AUTHOR: Steven Allen
 
-Configure [[https://github.com/emacs-elfeed/elfeed][Elfeed]] feeds with org-mode files. This package was inspired by [[https://github.com/remyhonig/elfeed-org][@remyhonig's]] elfeed-org, but the feature set is somewhat different and it avoids advising elfeed functions.
+Configure [[https://github.com/emacs-elfeed/elfeed][Elfeed]] feeds with org-mode files. This package was inspired by [[https://github.com/remyhonig/elfeed-org][@remyhonig's]] elfeed-org, but it focuses on having a cleaner integration with elfeed (no advice, public APIs only) and doing one thing only: configuring ~elfeed-feeds~ via org-mode.
 
 Compared to [[https://github.com/remyhonig/elfeed-org][@remyhonig's]] elfeed-org, this package:
 
