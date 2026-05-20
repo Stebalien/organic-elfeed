@@ -62,6 +62,8 @@
 (defcustom elfeed-org-files nil
   "List of `org-mode' files to search for feeds.
 
+Files may be absolute paths or relative to `org-directory'.
+
 Each file should contain headlines tagged with
 `elfeed-org-include-tag', either directly or via tag inheritance.
 The link text of each such headline is treated as a feed URL. See
