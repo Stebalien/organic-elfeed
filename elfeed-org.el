@@ -123,9 +123,7 @@ Return a list of feed specifications suitable for inclusion in
 `elfeed-feeds'. Each headline tagged with `elfeed-org-include-tag'
 contributes one feed, with its link text as the URL and link
 description as the optional title."
-  (org-with-file-buffer (expand-file-name file org-directory)
-    (org-with-wide-buffer
-     (elfeed-org--parse-buffer))))
+  (org-with-file-buffer file (org-with-wide-buffer (elfeed-org--parse-buffer))))
 
 (defun elfeed-org--feeds (files)
   "Parse FILES for Elfeed feed definitions.
@@ -139,11 +137,12 @@ combined list of all feed specifications found across all files."
 
 This function re-reads all `org-mode' files listed in `elfeed-org-files'
 and sets `elfeed-feeds' to the resulting list of feed specifications."
-  (cl-callf2 cl-remove-if
-      (lambda (feed) (eq (plist-get (cdr feed) :source) 'elfeed-org))
-      elfeed-feeds)
-  (when elfeed-org-mode
-    (cl-callf append elfeed-feeds (elfeed-org--feeds elfeed-org-files))))
+  (let ((default-directory org-directory))
+    (cl-callf2 cl-remove-if
+        (lambda (feed) (eq (plist-get (cdr feed) :source) 'elfeed-org))
+        elfeed-feeds)
+    (when elfeed-org-mode
+      (cl-callf append elfeed-feeds (elfeed-org--feeds elfeed-org-files)))))
 
 (defun elfeed-org--maybe-update-after-save ()
   "Update feeds if the current buffer is one of `elfeed-org-files'."
