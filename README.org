@@ -13,7 +13,7 @@ Configure [[https://github.com/emacs-elfeed/elfeed][Elfeed]] feeds with org-mode
   :vc (:url "https://github.com/Stebalien/elfeed-org")
   :after elfeed
   :custom
-  (elfeed-org-files "my-feeds.org")
+  (elfeed-org-files '("my-feeds.org"))
   (elfeed-org-mode t))
 #+end_src
 
