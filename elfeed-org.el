@@ -89,14 +89,6 @@ the file commentary for a complete usage example."
     (remove-hook 'org-mode-hook #'elfeed-org--org-setup))
   (elfeed-org--update))
 
-(defun elfeed-org--headline-link (headline)
-  "Extract the first link from HEADLINE's title.
-
-Returns the link element found in the headline's secondary string
-title, or nil if no link is present."
-  (org-element-map (org-element-property :title headline)
-      'link 'node nil 'first-match))
-
 (defun elfeed-org--parse-file (file)
   "Extract elfeed RSS feeds from the `org-mode' FILE.
 
@@ -115,7 +107,9 @@ description as the optional title."
                        (org-element-property :commentedp headline))
                (throw :org-element-skip nil))
              (when-let* (((member elfeed-org-include-tag tags))
-                         (link (elfeed-org--headline-link headline)))
+                         (title (org-element-property :title headline))
+                         (link (org-element-map title
+                                   'link 'node nil 'first-match)))
                (push `(,(org-element-property :raw-link link)
                        ,@(when-let* ((title (org-element-contents link)))
                            (list :title (substring-no-properties (car title))))
