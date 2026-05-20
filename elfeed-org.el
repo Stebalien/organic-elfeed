@@ -49,6 +49,7 @@
   :group 'elfeed)
 
 (defun elfeed-org--set-and-update (symbol value)
+  "Set the SYMBOL to VALUE and update `elfeed-feeds'."
   (set-default-toplevel-value symbol value)
   (when (featurep 'elfeed-org)
     (elfeed-org-update)))
