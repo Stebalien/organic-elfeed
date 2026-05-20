@@ -1,0 +1,170 @@
+#+TITLE: Test Elfeed
+
+* Feeds :elfeed:
+:PROPERTIES:
+:ID:       461eabd2-a620-401f-87d1-c52954adb3ae
+:END:
+  This top-level heading has the elfeed tag, so all sub-headlines inherit it.
+
+** https://example.com/feed1.xml
+:PROPERTIES:
+:ID:       bdc82ead-f008-4052-880a-bef1f55cd46f
+:END:
+   A simple feed with just a URL.
+
+** [[https://example.com/feed2.xml][Example News Feed]]
+:PROPERTIES:
+:ID:       80aefbd6-2a30-4c82-8627-e69e89a61191
+:END:
+   A feed with a custom title using link syntax.
+
+** [[https://example.com/feed3.xml][My Awesome Blog]] :personal:work:
+:PROPERTIES:
+:ID:       b13e3cbe-b93e-4697-b596-287fd5c51cc0
+:END:
+   A feed with custom tags that will be applied to entries.
+
+** https://example.com/feed4.xml :important:news:
+:PROPERTIES:
+:ID:       97d7233a-75a7-416e-9fc3-dd0bdd5ffffb
+:END:
+   Another feed with tags (different format).
+
+* Archived Feeds :ARCHIVE: :elfeed:
+:PROPERTIES:
+:ID:       20c5463d-abb2-47d7-8560-7caa2077e26b
+:END:
+  This subtree is archived and should be completely ignored.
+
+** https://archived.example.com/feed.xml
+:PROPERTIES:
+:ID:       ecf7a299-dcd9-4ea7-accd-809f7773ac2c
+:END:
+   This feed should NOT be included (archived subtree).
+
+* Commented Feeds :elfeed:
+:PROPERTIES:
+:ID:       9d84cb0b-789e-4c46-9ad7-7e4f815dcf7f
+:END:
+  This entire subtree is commented out.
+
+** COMMENT https://commented.example.com/feed.xml
+:PROPERTIES:
+:ID:       e7901152-28d3-49a1-9240-923e40645e32
+:END:
+
+  This should NOT be included.
+
+* Ignored Feeds :elfeed:ignore:
+:PROPERTIES:
+:ID:       bc650a1b-7621-418e-b805-bc6f37f8b694
+:END:
+  This subtree has the ignore tag.
+
+** https://ignored.example.com/feed.xml
+:PROPERTIES:
+:ID:       5e36e596-8ab4-4ae2-b587-8194d0ca3e3b
+:END:
+   This feed should NOT be included (ignored tag).
+
+** [[https://also-ignored.example.com/feed.xml][Ignored Feed Title]]
+:PROPERTIES:
+:ID:       659afa9a-9534-4681-a62b-8d43487f3e1c
+:END:
+   Another ignored feed.
+
+* Nested Subtrees :elfeed:
+:PROPERTIES:
+:ID:       4cc886ad-f74b-43fe-8f0c-6ff68176ba66
+:END:
+  Testing multiple levels of nesting.
+
+*** https://level3.example.com/feed.xml
+:PROPERTIES:
+:ID:       b9d4a5de-419c-45ef-8791-6c7478295a60
+:END:
+    A feed at level 3.
+
+**** https://level4.example.com/feed.xml
+:PROPERTIES:
+:ID:       df9d8bf9-6f38-4d63-8532-354fba5720fd
+:END:
+     A feed at level 4.
+
+***** https://level5.example.com/feed.xml
+:PROPERTIES:
+:ID:       07164198-2f03-4a6f-a480-7de94c8605ad
+:END:
+      A feed at level 5 (deep nesting).
+
+* Tags Inheritance Test :elfeed:
+:PROPERTIES:
+:ID:       fcc7dbaa-cc9b-45f7-9fba-5e1d646ce98b
+:END:
+  Testing tag inheritance from parent headings.
+
+** https://inherited.example.com/feed.xml :work:
+:PROPERTIES:
+:ID:       c1041961-4206-4306-8f64-0c912bd1d546
+:END:
+  This feed should have tags: elfeed work
+
+*** https://nested-inherited.example.com/feed.xml :personal:
+:PROPERTIES:
+:ID:       0803a983-0936-4163-8990-dc3fa8da9c3d
+:END:
+  This feed should have tags: elfeed work personal
+
+* Mixed Link Formats :elfeed:
+:PROPERTIES:
+:ID:       cf16d40b-72c0-47a8-8e1f-7c0bfb2493d0
+:END:
+  Testing various link formats.
+
+** http://mixed.example.com/feed1.xml
+:PROPERTIES:
+:ID:       f337f81e-a2b6-405c-80eb-e3fafc9039b7
+:END:
+   Plain HTTP URL.
+
+** https://mixed.example.com/feed2.xml
+:PROPERTIES:
+:ID:       232e1da9-d4f6-473a-acae-f7889166b3a2
+:END:
+   HTTPS URL.
+
+** [[https://mixed.example.com/feed3.xml]]
+:PROPERTIES:
+:ID:       9a4b52fe-cb2b-48aa-a2b4-eeb5f47218ce
+:END:
+   Link without description (title will be nil).
+
+** [[https://mixed.example.com/feed4.xml][Feed Title Here]]
+:PROPERTIES:
+:ID:       7e862ef7-5093-42d8-9724-d1f8b06b69a3
+:END:
+   Link with description.
+
+* No Elfefeed Tag
+:PROPERTIES:
+:ID:       9c091a0d-25f8-46e1-86a0-cc130db06584
+:END:
+  This heading does NOT have the elfeed tag.
+
+** https://no-tag.example.com/feed.xml
+:PROPERTIES:
+:ID:       e32c4d53-ad1e-499b-806d-6c37f26e2c77
+:END:
+   This feed should NOT be included.
+
+* Multiple Include Tags :elfeed:read:later:
+:PROPERTIES:
+:ID:       572d6601-062e-4a78-84c9-b39afbc5b8e9
+:END:
+  Testing multiple include tags.
+
+** https://multiple-tags.example.com/feed.xml :another:tag:
+:PROPERTIES:
+:ID:       03f62843-8c36-4e99-8813-057ec2cec917
+:END:
+   This feed should have tags: elfeed read later another tag
