@@ -4,6 +4,9 @@
 
 ;; Author: Steven Allen <steven@stebalien.com>
 ;; Keywords: news
+;; Version: 0.1
+;; Package-Requires: ((emacs "27.1") (elfeed "3.4.2") (org "9.7"))
+;; URL: https://github.com/Stebalien/elfeed-org
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -43,6 +46,7 @@
 (require 'seq)
 (require 'elfeed-db)
 (require 'org-element)
+(eval-when-compile (require 'org-macs))
 
 (defgroup elfeed-org nil
   "Org-mode integration for Elfeed."
@@ -128,12 +132,12 @@ combined list of all feed specifications found across all files."
 
 This function re-reads all `org-mode' files listed in `elfeed-org-files'
 and sets `elfeed-feeds' to the resulting list of feed specifications."
-  (setopt elfeed-feeds
-          (append
-           (seq-remove
-            (lambda (feed) (eq (plist-get (cdr feed) :source) 'elfeed-org))
-            elfeed-feeds)
-           (elfeed-org--feeds elfeed-org-files))))
+  (setq elfeed-feeds
+        (append
+         (seq-remove
+          (lambda (feed) (eq (plist-get (cdr feed) :source) 'elfeed-org))
+          elfeed-feeds)
+         (elfeed-org--feeds elfeed-org-files))))
 
 (defun elfeed-org--maybe-update-after-save ()
   "Update feeds if the current buffer is one of `elfeed-org-files'."
