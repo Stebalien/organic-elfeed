@@ -89,6 +89,33 @@ the file commentary for a complete usage example."
     (remove-hook 'org-mode-hook #'elfeed-org--org-setup))
   (elfeed-org--update))
 
+(defun elfeed-org--parse-buffer ()
+  "Extract elfeed RSS feeds from current `org-mode' buffer.
+
+Return a list of feed specifications suitable for inclusion in
+`elfeed-feeds'. Each headline tagged with `elfeed-org-include-tag'
+contributes one feed, with its link text as the URL and link
+description as the optional title."
+  (let (feeds)
+    (org-element-map (org-element-parse-buffer) 'headline
+      (lambda (headline)
+        (let ((tags (org-get-tags headline)))
+          (when (or (member elfeed-org-exclude-tag tags)
+                    (org-element-property :archivedp headline)
+                    (org-element-property :commentedp headline))
+            (throw :org-element-skip nil))
+          (when-let* (((member elfeed-org-include-tag tags))
+                      (title (org-element-property :title headline))
+                      (link (org-element-map title
+                                'link 'node nil 'first-match)))
+            (push `(,(org-element-property :raw-link link)
+                    ,@(when-let* ((title (org-element-contents link)))
+                        (list :title (substring-no-properties (car title))))
+                    :source elfeed-org
+                    ,@(delq 'elfeed (mapcar #'intern tags)))
+                  feeds)))))
+    (nreverse feeds)))
+
 (defun elfeed-org--parse-file (file)
   "Extract elfeed RSS feeds from the `org-mode' FILE.
 
@@ -96,27 +123,9 @@ Return a list of feed specifications suitable for inclusion in
 `elfeed-feeds'. Each headline tagged with `elfeed-org-include-tag'
 contributes one feed, with its link text as the URL and link
 description as the optional title."
-  (let (feeds)
-    (org-with-file-buffer (expand-file-name file org-directory)
-      (org-with-wide-buffer
-       (org-element-map (org-element-parse-buffer) 'headline
-         (lambda (headline)
-           (let ((tags (org-get-tags headline)))
-             (when (or (member elfeed-org-exclude-tag tags)
-                       (org-element-property :archivedp headline)
-                       (org-element-property :commentedp headline))
-               (throw :org-element-skip nil))
-             (when-let* (((member elfeed-org-include-tag tags))
-                         (title (org-element-property :title headline))
-                         (link (org-element-map title
-                                   'link 'node nil 'first-match)))
-               (push `(,(org-element-property :raw-link link)
-                       ,@(when-let* ((title (org-element-contents link)))
-                           (list :title (substring-no-properties (car title))))
-                       :source elfeed-org
-                       ,@(delq 'elfeed (mapcar #'intern tags)))
-                     feeds)))))
-       (nreverse feeds)))))
+  (org-with-file-buffer (expand-file-name file org-directory)
+    (org-with-wide-buffer
+     (elfeed-org--parse-buffer))))
 
 (defun elfeed-org--feeds (files)
   "Parse FILES for Elfeed feed definitions.
