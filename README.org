@@ -8,16 +8,72 @@ Configure [[https://github.com/emacs-elfeed/elfeed][Elfeed]] feeds with org-mode
 :ID:       af260ac0-414d-4da6-91e2-ac515413f329
 :END:
 
+To use ~elfeed-org~, you need to install it, configure your ~elfeed-org-files~, and enable ~elfeed-org-mode~. If you use ~use-package~, I suggest starting with the following:
+
 #+begin_src elisp
 (use-package elfeed-org
   :vc (:url "https://github.com/Stebalien/elfeed-org")
   :after elfeed
   :custom
-  (elfeed-org-files '("my-feeds.org"))
+  (elfeed-org-files '("feeds.org")) ; TODO: this should point to the file you put your feeds in.
   (elfeed-org-mode t))
 #+end_src
 
-* Features
+** Configuration
+:PROPERTIES:
+:ID:       77db31e8-133c-4e0d-b053-4d09bb19d592
+:END:
+
+This package is configured with an org-mode file where each headline is a feed.
+
+#+begin_src org
+,* My Feeds :elfeed:
+,** [[https://planet.emacslife.com/atom.xml][Planet Emacslife]] :emacs:
+Text will be ignored, but you can write whatever notes you want here!
+,** [[https://www.eff.org/rss/updates.xml][EFF]] :politics:
+,** Personal Blogs :blog:
+,*** https://nesbitt.io/feed.xml :technology:
+#+end_src
+
+1. Link descriptions will be turned into feed titles, where present.
+2. Headline tags will be applied to feed entries.
+3. Headlines tagged with ~ignore~ will be skipped.
+4. =COMMENTED= and archived sub-trees will be skipped.
+5. Headlines may be nested arbitrarily and headlines without links will be skipped.
+
+** Org Capture
+:PROPERTIES:
+:ID:       26497301-ae97-4463-9831-6e4885547227
+:END:
+
+While you can add new entries to your org-based feed list, I highly recommend configuring org-capture to make this easier.
+
+First, you'll need to configure [[https://orgmode.org/worg/org-contrib/org-protocol.html][org-protocol]] and integrate it into your web browser (I use and wrote [[https://github.com/Stebalien/org-capture-extension][org-capture-extension]], but this isn't the only option.
+
+Then you'll need to add an org-capture template. You'll need to modify the following to put your captured feeds in the right place.
+
+#+begin_src elisp
+(push `("f" "Feed" entry (file+olp "feeds.org" "Inbox") ,elfeed-org-capture-template))
+#+end_src
+
+Where ~elfeed-org-capture-template~ is defined as:
+
+#+begin_src org
+,* %(elfeed-org-capture:annotation)
+:PROPERTIES:
+:CREATED: %U
+:SOURCE: %:annotation
+:END:
+#+end_src
+
+When you capture a link with this template, Emacs will:
+
+1. Extract any feeds referenced in the captured link.
+2. Ask you which feed you want to subscribe to if there's more than one.
+3. Prompt you for a feed title.
+4. Present a captured org-mode entry suitable for inclusion in your "feeds.org" file.
+
+* Comparison
 :PROPERTIES:
 :ID:       c6f88dd6-40a7-49bd-9918-2cb35953e64c
 :END:
@@ -32,3 +88,13 @@ However, it doesn't implement the following features:
 1. Title-based tagging rules (=entry-title: REGEX=).
 2. Auto-ignoring broken feeds. I probably won't implement this.
 3. OPML Import/Export.
+
+* Copyright & Acknowledgements
+:PROPERTIES:
+:ID:       28eae0c7-4b1f-4e89-8974-329612eb3202
+:END:
+
+This project is copyright Steven Allen (except as noted below) and licenced under the GPLv3 or any later version.
+
+- The idea for ~elfeed-org~ was graciously plundered from [[https://github.com/remyhonig/elfeed-org][@remyhonig's elfeed-org]], but no code was taken.
+- The feed discovery code in ~elfeed-org-capture~ was initially taken from [[https://github.com/HKey/feed-discovery][@HKey's feed-discovery]] package, then largely rewritten to fix some bugs and remove the dependency on ~dash~. As right now, the only remaining function from HKey's project is ~elfeed-org-capture--feed-link-p~.
