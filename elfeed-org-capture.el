@@ -101,10 +101,12 @@ Returns an alist mapping feed URLs to titles."
         (completing-read "Choose Feed: " choices nil t)
         choices nil nil #'string=)))))
 
+;;;###autoload
 (defun elfeed-org-capture:link ()
   "Choose an appropriate feed URL for the currently stored link."
   (elfeed-org-capture--choose-feed (plist-get org-store-link-plist :link)))
 
+;;;###autoload
 (defun elfeed-org-capture:annotation ()
   "Choose an appropriate feed link for the currently stored link.
 The returned link will be formatted as an `org-mode' link [[URL][title]]."
