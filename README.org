@@ -56,7 +56,8 @@ This title of this blog is actually "Deeplinks". However, because I've used
 :END:
 Feeds headlines may specify elfeed feed properties.
 ,** Personal Blogs :blog:
-I subscribe to a few personal blogs and I put them all within this subtree. Due to tag inheritence, all entries from these blogs will be tagged with ~blog~.
+I subscribe to a few personal blogs and I put them all within this subtree. Due
+to tag inheritence, all entries from these blogs will be tagged with ~blog~.
 ,*** https://nesbitt.io/feed.xml :technology:
 Feeds lacking descriptions (bare URLs) will use the title from the feed itself.
 ,** Ignored
