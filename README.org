@@ -39,40 +39,40 @@ This package is configured with an org-mode file where each headline is a feed.
 
 #+begin_src org
 ,* My Feeds :elfeed:
-Due to tag inheritence, everything in this tree will be tagged with ~:elfeed:~
-and will be added to your ~elfeed-feeds~ list.
-,** [[https://planet.emacslife.com/atom.xml][Planet Emacslife]] :emacs:
-This is Sacha Chua's "Emacs Planet", an aggregation of many Emacs blogs
-into a single feed. This description is just for you, ~elfeed-org~ will
-ignore it.
-,** [[https://www.eff.org/rss/updates.xml][EFF]] :politics:
-This title of this blog is actually "Deeplinks". However, because I've used
-"EFF" as the org-mode link description, the feed's title will be changed to
-"EFF".
-,** [[https://www.phoronix.com/rss.php][Phoronix]] :linux:
-:PROPERTIES:
-:ELFEED:READABLE: t
-:ELFEED:FETCH-LINK: replace
-:END:
-Feeds headlines may specify elfeed feed properties.
-,** Personal Blogs :blog:
-I subscribe to a few personal blogs and I put them all within this subtree. Due
-to tag inheritence, all entries from these blogs will be tagged with ~blog~.
-,*** https://nesbitt.io/feed.xml :technology:
-Feeds lacking descriptions (bare URLs) will use the title from the feed itself.
-,** Ignored
-This package provides a few ways to ignore feeds.
-,*** COMMENT [[https://this-week-in-rust.org/atom.xml][This Week in Rust]] :rust:
-This feed is "commented out", so it won't show up in elfeed.
-,*** [[https://matrix.org/blog/feed][matrix.org]] :ARCHIVE:
-The same rule applies to archived feeds.
-,*** [[https://planet.kernel.org/rss20.xml][Kernel Planet]] :linux:ignore:
-Feeds with the ~:ignore:~ tag are ignored as well.
+  Due to tag inheritence, everything in this tree will be tagged with ~:elfeed:~
+  and will be added to your ~elfeed-feeds~ list.
+  ,** [[https://planet.emacslife.com/atom.xml][Planet Emacslife]] :emacs:
+    This is Sacha Chua's "Emacs Planet", an aggregation of many Emacs blogs
+    into a single feed. This description is just for you, ~elfeed-org~ will
+    ignore it.
+  ,** [[https://www.eff.org/rss/updates.xml][EFF]] :politics:
+    This title of this blog is actually "Deeplinks". However, because I've used
+    "EFF" as the org-mode link description, the feed's title will be changed to
+    "EFF".
+  ,** [[https://www.phoronix.com/rss.php][Phoronix]] :linux:
+    :PROPERTIES:
+    :ELFEED:READABLE: t
+    :ELFEED:FETCH-LINK: replace
+    :END:
+    Feeds headlines may specify elfeed feed properties.
+  ,** Personal Blogs :blog:
+    I subscribe to a few personal blogs and I put them all within this subtree. Due
+    to tag inheritence, all entries from these blogs will be tagged with ~blog~.
+    ,*** https://nesbitt.io/feed.xml :technology:
+      Feeds lacking descriptions (bare URLs) will use the title from the feed itself.
+  ,** Ignored
+    This package provides a few ways to ignore feeds.
+    ,*** COMMENT [[https://this-week-in-rust.org/atom.xml][This Week in Rust]] :rust:
+      This feed is "commented out", so it won't show up in elfeed.
+    ,*** [[https://matrix.org/blog/feed][matrix.org]] :ARCHIVE:
+      The same rule applies to archived feeds.
+    ,*** [[https://planet.kernel.org/rss20.xml][Kernel Planet]] :linux:ignore:
+      Feeds with the ~:ignore:~ tag are ignored as well.
 ,* Inbox
-This is where I capture my new feeds. They aren't tagged with ~:elfeed:~, so
-they won't actually show up in elfeed until I refile them into the appropriate
-section above.
-,** [[https://lars.ingebrigtsen.no/feed/][Lars Ingebrigtsen]] :emacs:
+  This is where I capture my new feeds. They aren't tagged with ~:elfeed:~, so
+  they won't actually show up in elfeed until I refile them into the appropriate
+  section above.
+  ,** [[https://lars.ingebrigtsen.no/feed/][Lars Ingebrigtsen]] :emacs:
 #+end_src
 
 Configured feeds will automatically be synced to ~elfeed-feeds~ when you save any file listed in ~elfeed-org-files~, enable/disable ~elfeed-org-mode~, or modify ~elfeed-org-files~.
