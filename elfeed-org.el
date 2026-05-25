@@ -106,18 +106,31 @@ description as the optional title."
         (when (or (org-element-property :archivedp headline)
                   (org-element-property :commentedp headline))
           (throw :org-element-skip nil))
-        (let ((tags (org-get-tags headline)))
-          (when-let* (((member elfeed-org-include-tag tags))
-                      ((not (member elfeed-org-exclude-tag tags)))
-                      (title (org-element-property :title headline))
-                      (link (org-element-map title
-                                'link 'node nil 'first-match)))
-            (push `(,(org-element-property :raw-link link)
-                    ,@(when-let* ((title (org-element-contents link)))
-                        (list :title (substring-no-properties (car title))))
-                    :source elfeed-org
-                    ,@(delq 'elfeed (mapcar #'intern tags)))
-                  feeds)))))
+        (when-let* ((tags (org-get-tags headline))
+                    ((member elfeed-org-include-tag tags))
+                    ((not (member elfeed-org-exclude-tag tags)))
+                    (title (org-element-property :title headline))
+                    (link (org-element-map title
+                              'link 'node nil 'first-match)))
+          (push `(,(org-element-property :raw-link link)
+                  ,@(when-let* ((title (org-element-contents link)))
+                      (list :title (substring-no-properties (car title))))
+                  :source elfeed-org
+                  ,@(apply 'append
+                           (org-element-properties-map
+                            (lambda (prop value)
+                              (setq prop (symbol-name prop))
+                              (when (string-prefix-p ":ELFEED:" prop)
+                                (list
+                                 (thread-last
+                                   prop
+                                   (string-remove-prefix ":ELFEED")
+                                   (downcase)
+                                   (intern))
+                                 (intern value))))
+                            headline))
+                  ,@(delq 'elfeed (mapcar #'intern tags)))
+                feeds))))
     (nreverse feeds)))
 
 (defun elfeed-org--parse-file (file)

@@ -30,6 +30,13 @@
 :END:
    Another feed with tags (different format).
 
+** [[https://example.com/feed5.xml][Feed With Properties]]
+:PROPERTIES:
+:ELFEED:READABLE: t
+:ID:       13309540-a828-4093-b241-f3fd03ea8fee
+:END:
+   A feed with a property.
+
 * Archived Feeds :ARCHIVE: :elfeed:
 :PROPERTIES:
 :ID:       20c5463d-abb2-47d7-8560-7caa2077e26b

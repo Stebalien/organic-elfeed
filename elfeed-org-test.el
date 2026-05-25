@@ -37,6 +37,7 @@
               ("https://example.com/feed2.xml" :title "Example News Feed" :source elfeed-org)
               ("https://example.com/feed3.xml" :title "My Awesome Blog" :source elfeed-org personal work)
               ("https://example.com/feed4.xml" :source elfeed-org important news)
+              ("https://example.com/feed5.xml" :title "Feed With Properties" :source elfeed-org :readable t)
               ("https://archived.example.com/feed.xml" :source elfeed-org)
               ("https://level3.example.com/feed.xml" :source elfeed-org)
               ("https://level4.example.com/feed.xml" :source elfeed-org)
