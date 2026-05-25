@@ -103,12 +103,12 @@ description as the optional title."
   (let (feeds)
     (org-element-map (org-element-parse-buffer) 'headline
       (lambda (headline)
+        (when (or (org-element-property :archivedp headline)
+                  (org-element-property :commentedp headline))
+          (throw :org-element-skip nil))
         (let ((tags (org-get-tags headline)))
-          (when (or (member elfeed-org-exclude-tag tags)
-                    (org-element-property :archivedp headline)
-                    (org-element-property :commentedp headline))
-            (throw :org-element-skip nil))
           (when-let* (((member elfeed-org-include-tag tags))
+                      ((not (member elfeed-org-exclude-tag tags)))
                       (title (org-element-property :title headline))
                       (link (org-element-map title
                                 'link 'node nil 'first-match)))
