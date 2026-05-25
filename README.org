@@ -50,10 +50,10 @@ This title of this blog is actually "Deeplinks". However, because I've used
 "EFF" as the org-mode link description, the feed's title will be changed to
 "EFF".
 ,** [[https://www.phoronix.com/rss.php][Phoronix]] :linux:
-,:PROPERTIES:
-,:ELFEED:READABLE: t
-,:ELFEED:FETCH-LINK: replace
-,:END:
+:PROPERTIES:
+:ELFEED:READABLE: t
+:ELFEED:FETCH-LINK: replace
+:END:
 Feeds headlines may specify elfeed feed properties.
 ,** Personal Blogs :blog:
 I subscribe to a few personal blogs and I put them all within this subtree. Due to tag inheritence, all entries from these blogs will be tagged with ~blog~.
