@@ -154,12 +154,15 @@ combined list of all feed specifications found across all files."
 
 This function re-reads all `org-mode' files listed in `elfeed-org-files'
 and sets `elfeed-feeds' to the resulting list of feed specifications."
-  (let ((default-directory org-directory))
+  (let ((default-directory org-directory)
+        (feeds elfeed-feeds))
     (cl-callf2 cl-remove-if
         (lambda (feed) (eq (plist-get (cdr feed) :source) 'elfeed-org))
-        elfeed-feeds)
+        feeds)
     (when elfeed-org-mode
-      (cl-callf append elfeed-feeds (elfeed-org--feeds elfeed-org-files)))))
+      (cl-callf append feeds (elfeed-org--feeds elfeed-org-files)))
+    (unless (eq feeds elfeed-feeds)
+      (setopt elfeed-feeds feeds))))
 
 (defun elfeed-org--maybe-update-after-save ()
   "Update feeds if the current buffer is one of `elfeed-org-files'."
