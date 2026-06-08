@@ -32,7 +32,7 @@
 (require 'seq)
 (require 'dom)
 (require 'url-expand)
-(require 'org-capture)
+(require 'ol)
 
 (defconst organic-elfeed-capture-mime-types '("application/rss+xml"
                                               "application/feed+json"
