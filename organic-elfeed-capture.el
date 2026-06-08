@@ -76,14 +76,13 @@ Returns an alist mapping feed URLs to titles."
     (url-insert-file-contents url)
     (let* ((dom (libxml-parse-html-region))
            (base-url (organic-elfeed-capture--find-base-url dom url)))
-      (cl-loop
-       for elt in (dom-search dom #'organic-elfeed-capture--feed-link-p)
-       for href = (dom-attr elt 'href)
-       for title = (dom-attr elt 'title)
-       collect
-       (cons (url-expand-file-name href base-url)
-             ;; Some websites don't use the "title" attribute correctly..."
-             (unless (equal href title) title))))))
+      (mapcar (lambda (el)
+                (let-alist (dom-attributes el)
+                  (cons (url-expand-file-name .href base-url)
+                        ;; Some websites don't use the "title" attribute
+                        ;; correctly...
+                        (unless (equal .href .title) .title))))
+              (dom-search dom #'organic-elfeed-capture--feed-link-p)))))
 
 (defun organic-elfeed-capture--choose-feed (url)
   "Chooses a feed from the webpage at URL."
