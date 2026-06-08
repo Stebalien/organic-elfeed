@@ -1,12 +1,12 @@
-;;; elfeed-org.el --- Configure elfeed subscriptions via org-mode files  -*- lexical-binding: t; -*-
+;;; organic-elfeed.el --- Configure elfeed subscriptions via org-mode files  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2026  Steven Allen
 
 ;; Author: Steven Allen <steven@stebalien.com>
 ;; Keywords: news
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") (elfeed "3.4.2") (org "9.7"))
-;; URL: https://github.com/Stebalien/elfeed-org
+;; Package-Requires: ((emacs "27.1") (elfeed "4.0.0") (org "9.7"))
+;; URL: https://github.com/Stebalien/organic-elfeed
 
 ;; This file is NOT a part of GNU Emacs.
 
@@ -28,7 +28,7 @@
 ;; Configure Elfeed subscriptions via org-mode files.
 ;;
 ;; Define RSS/Atom feeds as org-mode headlines tagged with
-;; `elfeed-org-include-tag'. The headline's link text is the feed
+;; `organic-elfeed-include-tag'. The headline's link text is the feed
 ;; URL; the link description (if any) is the feed title.
 ;;
 ;; Example:
@@ -38,66 +38,66 @@
 ;;     ** [[https://example.com/feed.xml][My Feed Title]]
 ;;
 ;; Archived and commented headlines are skipped, as are those tagged with
-;; `elfeed-org-exclude-tag'. Any additional `org-mode' tags are applied to
+;; `organic-elfeed-exclude-tag'. Any additional `org-mode' tags are applied to
 ;; feed entries.
 ;;
 ;; The feed list is automatically updated after saving an org-mode file
-;; listed in `elfeed-org-files'.
+;; listed in `organic-elfeed-files'.
 
 ;;; Code:
 (require 'elfeed-db)
 (require 'org-element)
 (eval-when-compile (require 'org-macs))
 
-(defgroup elfeed-org nil
+(defgroup organic-elfeed nil
   "Org-mode integration for Elfeed."
   :group 'elfeed)
 
-(defun elfeed-org--set-and-update (symbol value)
+(defun organic-elfeed--set-and-update (symbol value)
   "Set the SYMBOL to VALUE and update `elfeed-feeds'."
   (set-default-toplevel-value symbol value)
-  (when (featurep 'elfeed-org)
-    (elfeed-org--update)))
+  (when (featurep 'organic-elfeed)
+    (organic-elfeed--update)))
 
-(defcustom elfeed-org-files nil
+(defcustom organic-elfeed-files nil
   "List of `org-mode' files to search for feeds.
 
 Files may be absolute paths or relative to `org-directory'.
 
 Each file should contain headlines tagged with
-`elfeed-org-include-tag', either directly or via tag inheritance.
+`organic-elfeed-include-tag', either directly or via tag inheritance.
 The link text of each such headline is treated as a feed URL. See
 the file commentary for a complete usage example."
   :type '(repeat file)
-  :set #'elfeed-org--set-and-update
-  :group 'elfeed-org)
+  :set #'organic-elfeed--set-and-update
+  :group 'organic-elfeed)
 
-(defcustom elfeed-org-include-tag "elfeed"
+(defcustom organic-elfeed-include-tag "elfeed"
   "Tag used to identify Elfeed feeds."
   :type '(repeat string)
-  :set #'elfeed-org--set-and-update
-  :group 'elfeed-org)
+  :set #'organic-elfeed--set-and-update
+  :group 'organic-elfeed)
 
-(defcustom elfeed-org-exclude-tag "ignore"
+(defcustom organic-elfeed-exclude-tag "ignore"
   "Tag used to ignore Elfeed feeds."
   :type '(repeat string)
-  :set #'elfeed-org--set-and-update
-  :group 'elfeed-org)
+  :set #'organic-elfeed--set-and-update
+  :group 'organic-elfeed)
 
 ;;;###autoload
-(define-minor-mode elfeed-org-mode
-  "Populate `elfeed-feeds' via `org-mode' files specified in `elfeed-org-files'."
+(define-minor-mode organic-elfeed-mode
+  "Populate `elfeed-feeds' from the `org-mode' files in `organic-elfeed-files'."
   :global t
-  (if elfeed-org-mode
-      (add-hook 'org-mode-hook #'elfeed-org--org-setup)
-    (remove-hook 'org-mode-hook #'elfeed-org--org-setup))
-  (elfeed-org--update))
+  (if organic-elfeed-mode
+      (add-hook 'org-mode-hook #'organic-elfeed--org-setup)
+    (remove-hook 'org-mode-hook #'organic-elfeed--org-setup))
+  (organic-elfeed--update))
 
-(defun elfeed-org--parse-buffer ()
+(defun organic-elfeed--parse-buffer ()
   "Extract elfeed RSS feeds from current `org-mode' buffer.
 
 Return a list of feed specifications suitable for inclusion in
-`elfeed-feeds'. Each headline tagged with `elfeed-org-include-tag'
+`elfeed-feeds'. Each headline tagged with `organic-elfeed-include-tag'
 contributes one feed, with its link text as the URL and link
 description as the optional title."
   (let (feeds)
@@ -107,15 +107,15 @@ description as the optional title."
                   (org-element-property :commentedp headline))
           (throw :org-element-skip nil))
         (when-let* ((tags (org-get-tags headline))
-                    ((member elfeed-org-include-tag tags))
-                    ((not (member elfeed-org-exclude-tag tags)))
+                    ((member organic-elfeed-include-tag tags))
+                    ((not (member organic-elfeed-exclude-tag tags)))
                     (title (org-element-property :title headline))
                     (link (org-element-map title
                               'link 'node nil 'first-match)))
           (push `(,(org-element-property :raw-link link)
                   ,@(when-let* ((title (org-element-contents link)))
                       (list :title (substring-no-properties (car title))))
-                  :source elfeed-org
+                  :source organic-elfeed
                   ,@(apply 'append
                            (org-element-properties-map
                             (lambda (prop value)
@@ -133,49 +133,49 @@ description as the optional title."
                 feeds))))
     (nreverse feeds)))
 
-(defun elfeed-org--parse-file (file)
+(defun organic-elfeed--parse-file (file)
   "Extract elfeed RSS feeds from the `org-mode' FILE.
 
 Return a list of feed specifications suitable for inclusion in
-`elfeed-feeds'. Each headline tagged with `elfeed-org-include-tag'
+`elfeed-feeds'. Each headline tagged with `organic-elfeed-include-tag'
 contributes one feed, with its link text as the URL and link
 description as the optional title."
-  (org-with-file-buffer file (org-with-wide-buffer (elfeed-org--parse-buffer))))
+  (org-with-file-buffer file (org-with-wide-buffer (organic-elfeed--parse-buffer))))
 
-(defun elfeed-org--feeds (files)
+(defun organic-elfeed--feeds (files)
   "Parse FILES for Elfeed feed definitions.
 
 FILES is a list of file paths to `org-mode' files. Return a
 combined list of all feed specifications found across all files."
-  (mapcan #'elfeed-org--parse-file files))
+  (mapcan #'organic-elfeed--parse-file files))
 
-(defun elfeed-org--update ()
-  "Update `elfeed-feeds' by parsing all files in `elfeed-org-files'.
+(defun organic-elfeed--update ()
+  "Update `elfeed-feeds' by parsing all files in `organic-elfeed-files'.
 
-This function re-reads all `org-mode' files listed in `elfeed-org-files'
+This function re-reads all `org-mode' files listed in `organic-elfeed-files'
 and sets `elfeed-feeds' to the resulting list of feed specifications."
   (let ((default-directory org-directory)
         (feeds elfeed-feeds))
     (cl-callf2 cl-remove-if
-        (lambda (feed) (eq (plist-get (cdr feed) :source) 'elfeed-org))
+        (lambda (feed) (eq (plist-get (cdr feed) :source) 'organic-elfeed))
         feeds)
-    (when elfeed-org-mode
-      (cl-callf append feeds (elfeed-org--feeds elfeed-org-files)))
+    (when organic-elfeed-mode
+      (cl-callf append feeds (organic-elfeed--feeds organic-elfeed-files)))
     (unless (eq feeds elfeed-feeds)
       (setopt elfeed-feeds feeds))))
 
-(defun elfeed-org--maybe-update-after-save ()
-  "Update feeds if the current buffer is one of `elfeed-org-files'."
+(defun organic-elfeed--maybe-update-after-save ()
+  "Update feeds if the current buffer is one of `organic-elfeed-files'."
   (let ((default-directory org-directory))
     (when (and buffer-file-name (cl-member buffer-file-name
-                                           elfeed-org-files
+                                           organic-elfeed-files
                                            :test #'file-equal-p))
-      (elfeed-org--update))))
+      (organic-elfeed--update))))
 
-(defun elfeed-org--org-setup ()
+(defun organic-elfeed--org-setup ()
   "Set up auto-update for elfeed when editing an `org-mode' file."
-  (add-hook 'after-save-hook 'elfeed-org--update nil t))
+  (add-hook 'after-save-hook 'organic-elfeed--update nil t))
 
 
-(provide 'elfeed-org)
-;;; elfeed-org.el ends here
+(provide 'organic-elfeed)
+;;; organic-elfeed.el ends here

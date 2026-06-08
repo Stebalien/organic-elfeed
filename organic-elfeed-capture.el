@@ -1,4 +1,4 @@
-;;; elfeed-org-capture.el --- Org-capture integration for elfeed-org  -*- lexical-binding: t; -*-
+;;; organic-elfeed-capture.el --- Org-capture integration for organic-elfeed  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2026  Steven Allen
 ;; Copyright (C) 2020  Hiroki YAMAKAWA
@@ -34,50 +34,50 @@
 (require 'url-expand)
 (require 'org-capture)
 
-(defconst elfeed-org-capture-mime-types '("application/rss+xml"
+(defconst organic-elfeed-capture-mime-types '("application/rss+xml"
                                           "application/feed+json"
                                           "application/atom+xml")
   "Feed MIME types.")
 
 ;;;###autoload
-(defconst elfeed-org-capture-template
-  "* %(elfeed-org-capture:annotation)
+(defconst organic-elfeed-capture-template
+  "* %(organic-elfeed-capture:annotation)
 :PROPERTIES:
 :CREATED: %U
 :SOURCE: %:annotation
 :END:"
-  "Org-capture template for `elfeed-org'.")
+  "Org-capture template for `organic-elfeed'.")
 
-(defun elfeed-org-capture--feed-link-p (element)
+(defun organic-elfeed-capture--feed-link-p (element)
   "Non-nil if ELEMENT is an rss/atom/json feed link element."
   (and (eq (dom-tag element) 'link)
        (equal (dom-attr element 'rel) "alternate")
-       (member (dom-attr element 'type) elfeed-org-capture-mime-types)
+       (member (dom-attr element 'type) organic-elfeed-capture-mime-types)
        (dom-attr element 'href)))
 
-(defsubst elfeed-org-capture--strip-fragment (url)
+(defsubst organic-elfeed-capture--strip-fragment (url)
   "Return the given URL with any fragments removed."
   (when-let* ((fragment (string-search "#" url)))
     (setq url (substring url 0 fragment)))
   url)
 
-(defsubst elfeed-org-capture--find-base-url (dom url)
+(defsubst organic-elfeed-capture--find-base-url (dom url)
   "Find base url from DOM loaded from URL."
   (if-let* ((base-url (seq-some (lambda (el) (dom-attr el 'href))
                                    (dom-by-tag dom 'base))))
       (url-expand-file-name
-       base-url (elfeed-org-capture--strip-fragment url))
+       base-url (organic-elfeed-capture--strip-fragment url))
     url))
 
-(defun elfeed-org-capture--discover-feeds (url)
+(defun organic-elfeed-capture--discover-feeds (url)
   "Discover feeds from URL.
 Returns an alist mapping feed URLs to titles."
   (with-temp-buffer
     (url-insert-file-contents url)
     (let* ((dom (libxml-parse-html-region))
-           (base-url (elfeed-org-capture--find-base-url dom url)))
+           (base-url (organic-elfeed-capture--find-base-url dom url)))
       (cl-loop
-       for elt in (dom-search dom #'elfeed-org-capture--feed-link-p)
+       for elt in (dom-search dom #'organic-elfeed-capture--feed-link-p)
        for href = (dom-attr elt 'href)
        for title = (dom-attr elt 'title)
        collect
@@ -85,9 +85,9 @@ Returns an alist mapping feed URLs to titles."
              ;; Some websites don't use the "title" attribute correctly..."
              (unless (equal href title) title))))))
 
-(defun elfeed-org-capture--choose-feed (url)
+(defun organic-elfeed-capture--choose-feed (url)
   "Chooses a feed from the webpage at URL."
-  (pcase (elfeed-org-capture--discover-feeds url)
+  (pcase (organic-elfeed-capture--discover-feeds url)
     (`(,feed) (car feed))
     ('nil (user-error "No feeds found!"))
     (feeds
@@ -102,18 +102,18 @@ Returns an alist mapping feed URLs to titles."
         choices nil nil #'string=)))))
 
 ;;;###autoload
-(defun elfeed-org-capture:link ()
+(defun organic-elfeed-capture:link ()
   "Choose an appropriate feed URL for the currently stored link."
-  (elfeed-org-capture--choose-feed (plist-get org-store-link-plist :link)))
+  (organic-elfeed-capture--choose-feed (plist-get org-store-link-plist :link)))
 
 ;;;###autoload
-(defun elfeed-org-capture:annotation ()
+(defun organic-elfeed-capture:annotation ()
   "Choose an appropriate feed link for the currently stored link.
 The returned link will be formatted as an `org-mode' link [[URL][title]]."
   (let ((desc (plist-get org-store-link-plist :description)))
-    (when-let* ((feed (elfeed-org-capture:link)))
+    (when-let* ((feed (organic-elfeed-capture:link)))
       (org-link-make-string
        feed (read-string (format-prompt "Feed Title" desc) nil nil desc)))))
 
-(provide 'elfeed-org-capture)
-;;; elfeed-org-capture.el ends here
+(provide 'organic-elfeed-capture)
+;;; organic-elfeed-capture.el ends here
