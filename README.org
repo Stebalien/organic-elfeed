@@ -1,9 +1,9 @@
 #+TITLE:Organic Elfeed
 #+AUTHOR: Steven Allen
 
-Integrate org-mode into Elfeed:
+Integrate [[https://orgmode.org/][org-mode]] into [[https://github.com/emacs-elfeed/elfeed][Elfeed]]:
 
-- Configure [[https://github.com/emacs-elfeed/elfeed][Elfeed]] with an org-mode feed list.
+- Configure Elfeed with an org-mode feed list.
 - Capture blogs directly from your browser into your org-mode feed list.
 
 This package was heavily inspired by [[https://github.com/remyhonig/elfeed-org][@remyhonig's elfeed-org]].
