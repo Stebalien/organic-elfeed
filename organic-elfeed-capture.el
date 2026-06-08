@@ -35,8 +35,8 @@
 (require 'org-capture)
 
 (defconst organic-elfeed-capture-mime-types '("application/rss+xml"
-                                          "application/feed+json"
-                                          "application/atom+xml")
+                                              "application/feed+json"
+                                              "application/atom+xml")
   "Feed MIME types.")
 
 ;;;###autoload
@@ -57,14 +57,14 @@
 
 (defsubst organic-elfeed-capture--strip-fragment (url)
   "Return the given URL with any fragments removed."
-  (when-let* ((fragment (string-search "#" url)))
-    (setq url (substring url 0 fragment)))
-  url)
+  (if-let* ((fragment (string-search "#" url)))
+      (substring url 0 fragment)
+    url))
 
 (defsubst organic-elfeed-capture--find-base-url (dom url)
   "Find base url from DOM loaded from URL."
   (if-let* ((base-url (seq-some (lambda (el) (dom-attr el 'href))
-                                   (dom-by-tag dom 'base))))
+                                (dom-by-tag dom 'base))))
       (url-expand-file-name
        base-url (organic-elfeed-capture--strip-fragment url))
     url))
