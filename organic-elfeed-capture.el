@@ -81,7 +81,7 @@ Returns an alist mapping feed URLs to titles."
        for href = (dom-attr elt 'href)
        for title = (dom-attr elt 'title)
        collect
-       (cons (url-expand-file-name (dom-attr elt 'href) base-url)
+       (cons (url-expand-file-name href base-url)
              ;; Some websites don't use the "title" attribute correctly..."
              (unless (equal href title) title))))))
 
